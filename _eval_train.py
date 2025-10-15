@@ -5,7 +5,7 @@ from src.question_generation.data import DatasetConfig, load_local_dataset
 from src.question_generation.train import preprocess_dataset
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-config = DatasetConfig(data_path=Path('data/uz_qg_sample.jsonl'), validation_ratio=0.2, seed=42)
+config = DatasetConfig(data_paths=(Path('data/uz_qg_sample.jsonl'),), validation_ratio=0.2, seed=42)
 dataset = load_local_dataset(config)
 tokenizer = AutoTokenizer.from_pretrained('models/uz_qg_mt5')
 model = AutoModelForSeq2SeqLM.from_pretrained('models/uz_qg_mt5').to(device)
