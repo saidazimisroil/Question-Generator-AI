@@ -1,6 +1,7 @@
 accelerate>=0.26.0
 datasets>=2.14.0
 evaluate>=0.4.0
+multiprocess==0.70.14
 numpy>=1.24.0
 sacrebleu>=2.4.0
 sentencepiece>=0.1.99
