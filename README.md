@@ -76,6 +76,39 @@ python -m src.question_generation.inference \
 
 By default inference runs with deterministic beam search (`--no_sample`) plus post-processing that strips `<extra_id_*>` markers, collapses repeated punctuation, and guarantees the result ends with a question mark. Add `--sample` if you want more diverse questions.
 
+## GPT-powered question generation
+
+You can also skip local checkpoints entirely and call OpenAI's GPT models. Set the `OPENAI_API_KEY` environment variable before running any of the commands below.
+
+### Command-line usage
+
+Generate a question with a single command:
+
+```bash
+export OPENAI_API_KEY="sk-your-token"
+python generate_question.py --sentence="Mening ismim Bobur"
+```
+
+To switch models, pass `--model gpt-4o-mini` (or any other chat completion model identifier).
+
+### FastAPI service
+
+Spin up an HTTP API backed by the GPT model:
+
+```bash
+uvicorn src.question_generation.api:app --host 0.0.0.0 --port 8000
+```
+
+Then call it with your favourite HTTP client:
+
+```bash
+curl -X POST http://localhost:8000/generate \
+  -H "Content-Type: application/json" \
+  -d '{"sentence": "Bu Toshkent O'zbekistonning poytaxti."}'
+```
+
+The response includes both the original sentence and the generated question.
+
 ## Extending the dataset
 
 The model quality depends on the diversity and correctness of the training pairs. To improve it:
