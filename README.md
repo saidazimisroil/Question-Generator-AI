@@ -5,6 +5,7 @@ This project provides a lightweight workflow for training and serving a sequence
 ## Project layout
 
 - `data/uz_qg_sample.jsonl` &mdash; starter dataset with Uzbek examples (`input_text`, `target_text`).
+- `data/uzbek_qa_1000.jsonl` &mdash; 1,000 qatordan iborat savol-javob juftliklari to'plami.
 - `src/question_generation/data.py` &mdash; helpers that load and split local JSONL files into Hugging Face datasets.
 - `src/question_generation/train.py` &mdash; fine-tuning script built on `transformers.Seq2SeqTrainer`.
 - `src/question_generation/inference.py` &mdash; CLI for generating questions with a trained checkpoint.
@@ -84,6 +85,8 @@ The model quality depends on the diversity and correctness of the training pairs
 2. Translate existing high-quality question generation datasets (e.g., SQuAD) into Uzbek, then manually clean.
 3. Include metadata such as answer spans if you plan to generate answer-aware questions; extend `data.py` accordingly.
 4. Re-run the training script with the updated JSONL file.
+
+`scripts/generate_uzbek_qa_dataset.py` fayli yangi savol-javob to'plamini qayta yaratish yoki tahrirlash uchun xizmat qiladi. Skript `data/uzbek_qa_1000.jsonl` faylini avtomatik shakllantiradi.
 
 ## Tips
 
