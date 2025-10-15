@@ -1,14 +1,18 @@
 from __future__ import annotations
 
 import logging
+import os
 from functools import lru_cache
 
-from openai import OpenAI
-from openai import OpenAIError
+from dotenv import load_dotenv
+from openai import OpenAI, OpenAIError
+
+# Load environment variables from a local .env file (if present) before we read them.
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_GPT_MODEL = "gpt-3.5-turbo"
+DEFAULT_GPT_MODEL = os.getenv("QUESTION_GPT_MODEL", "gpt-3.5-turbo")
 SYSTEM_PROMPT = (
     "You are an assistant that generates well-formed Uzbek questions based on "
     "a provided declarative sentence."

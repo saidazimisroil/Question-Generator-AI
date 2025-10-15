@@ -78,18 +78,24 @@ By default inference runs with deterministic beam search (`--no_sample`) plus po
 
 ## GPT-powered question generation
 
-You can also skip local checkpoints entirely and call OpenAI's GPT models. Set the `OPENAI_API_KEY` environment variable before running any of the commands below.
+You can also skip local checkpoints entirely and call OpenAI's GPT models. Create a `.env` file in the project root (ignored by Git) to store your credentials and preferred model:
+
+```dotenv
+OPENAI_API_KEY=sk-your-token
+QUESTION_GPT_MODEL=gpt-4
+```
+
+The tooling loads this file automatically; `OPENAI_API_KEY` authenticates the client and `QUESTION_GPT_MODEL` becomes the default model when you omit `--model`.
 
 ### Command-line usage
 
 Generate a question with a single command:
 
 ```bash
-export OPENAI_API_KEY="sk-your-token"
 python generate_question.py --sentence="Mening ismim Bobur"
 ```
 
-To switch models, pass `--model gpt-4o-mini` (or any other chat completion model identifier).
+To switch models temporarily, pass `--model gpt-4o-mini` (or any other chat completion identifier).
 
 ### FastAPI service
 
