@@ -1,4 +1,4 @@
-# Uzbek Question Generation
+# Uzbek Question Generation | GPT API based type
 
 This project provides a lightweight workflow for training and serving a sequence-to-sequence model that turns Uzbek statements into questions. The default configuration fine-tunes `google/mt5-small` on a small handcrafted dataset, but you can extend it with your own high-quality sentence/question pairs.
 
