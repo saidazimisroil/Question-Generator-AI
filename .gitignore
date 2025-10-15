@@ -93,7 +93,9 @@ cython_debug/
 Thumbs.db
 
 # Project specific assets
-data/
+data/*
+!data/uz_qg_sample.jsonl
+!data/uzbek_qa_1000.jsonl
 models/
 *.log
 logs/

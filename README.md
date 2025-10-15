@@ -5,6 +5,7 @@ This project provides a lightweight workflow for training and serving a sequence
 ## Project layout
 
 - `data/uz_qg_sample.jsonl` &mdash; starter dataset with Uzbek examples (`input_text`, `target_text`).
+- `data/uzbek_qa_1000.jsonl` &mdash; 1,000 qatordan iborat savol-javob juftliklari to'plami (`input_text`, `target_text`).
 - `src/question_generation/data.py` &mdash; helpers that load and split local JSONL files into Hugging Face datasets.
 - `src/question_generation/train.py` &mdash; fine-tuning script built on `transformers.Seq2SeqTrainer`.
 - `src/question_generation/inference.py` &mdash; CLI for generating questions with a trained checkpoint.
@@ -44,6 +45,18 @@ python -m src.question_generation.train \
 
 The script now applies consistent task prompting (`uz_qg: `), safer generation defaults (beam search, no-repeat n-grams), and optional label smoothing. Adjust the hyperparameters as you scale up the dataset; on tiny corpora, more epochs with a low learning rate usually work best.
 
+To train on every JSONL file in the `data/` directory (including the curated 1,000-example set), point `--train_file` at the folder or provide several sources explicitly:
+
+```bash
+python -m src.question_generation.train \
+  --train_file data \
+  --train_files data/legacy_pairs.jsonl data/more_pairs/*.jsonl \
+  --model_name_or_path google/mt5-small \
+  --output_dir models/uz_qg_mt5_all
+```
+
+The loader expands directories and glob patterns, deduplicates overlapping paths, and merges all examples before shuffling and splitting into train/validation subsets.
+
 ## Inference
 
 After training, generate questions with:
@@ -76,6 +89,16 @@ python -m src.question_generation.inference \
 
 By default inference runs with deterministic beam search (`--no_sample`) plus post-processing that strips `<extra_id_*>` markers, collapses repeated punctuation, and guarantees the result ends with a question mark. Add `--sample` if you want more diverse questions.
 
+### Windows tip
+
+If you encounter an import error similar to `AttributeError: module '_multiprocess' has no attribute 'closesocket'` when launching the training script on Windows, ensure you have the pinned dependency installed:
+
+```powershell
+pip install multiprocess==0.70.14
+```
+
+This matches the version declared in `requirements.txt` and restores compatibility with the `datasets` library on Windows.
+
 ## Extending the dataset
 
 The model quality depends on the diversity and correctness of the training pairs. To improve it:
@@ -84,6 +107,8 @@ The model quality depends on the diversity and correctness of the training pairs
 2. Translate existing high-quality question generation datasets (e.g., SQuAD) into Uzbek, then manually clean.
 3. Include metadata such as answer spans if you plan to generate answer-aware questions; extend `data.py` accordingly.
 4. Re-run the training script with the updated JSONL file.
+
+`scripts/generate_uzbek_qa_dataset.py` fayli yangi savol-javob to'plamini qayta yaratish yoki tahrirlash uchun xizmat qiladi. Skript `data/uzbek_qa_1000.jsonl` faylini avtomatik shakllantiradi.
 
 ## Tips
 
