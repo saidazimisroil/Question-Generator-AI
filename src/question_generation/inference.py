@@ -38,7 +38,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--num_beams", type=int, default=4)
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--top_p", type=float, default=0.95)
-    parser.add_argument("--min_new_tokens", type=int, default=8)
+    parser.add_argument("--min_new_tokens", type=int, default=1)
     parser.add_argument("--max_new_tokens", type=int, default=48)
     parser.add_argument("--no_repeat_ngram_size", type=int, default=3)
     parser.add_argument("--length_penalty", type=float, default=0.9)
@@ -94,14 +94,7 @@ def generate(
     for sentence in sentences:
         prefixed = f"{source_prefix}{sentence}" if source_prefix else sentence
         inputs = tokenizer(prefixed, return_tensors="pt", padding=False).to(device)
-        sequence_length = inputs["input_ids"].shape[-1]
-        max_length_value = max_length if max_length > 0 else sequence_length + max_new_tokens
-        min_length_value = max(sequence_length + min_new_tokens, 1)
-        if min_length_value > max_length_value:
-            max_length_value = min_length_value
         generation_kwargs = {
-            "max_length": max_length_value,
-            "min_length": min_length_value,
             "num_beams": num_beams,
             "do_sample": do_sample,
             "no_repeat_ngram_size": no_repeat_ngram_size,
@@ -109,6 +102,12 @@ def generate(
             "repetition_penalty": repetition_penalty,
             "early_stopping": early_stopping,
         }
+        if max_length > 0:
+            generation_kwargs["max_length"] = max_length
+        else:
+            generation_kwargs["max_new_tokens"] = max_new_tokens
+        if min_new_tokens > 0:
+            generation_kwargs["min_new_tokens"] = min_new_tokens
         if do_sample:
             generation_kwargs.update({"temperature": temperature, "top_p": top_p})
         else:
