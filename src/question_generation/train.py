@@ -28,7 +28,19 @@ def parse_args() -> argparse.Namespace:
         "--train_file",
         type=Path,
         default=Path("data/uz_qg_sample.jsonl"),
-        help="Path to the JSONL dataset containing `input_text` and `target_text` fields.",
+        help=(
+            "Path to a JSONL dataset file. Directories or glob patterns can be provided to "
+            "load multiple files."
+        ),
+    )
+    parser.add_argument(
+        "--train_files",
+        type=Path,
+        nargs="+",
+        default=(),
+        help=(
+            "Additional dataset files, directories, or glob patterns to combine with --train_file."
+        ),
     )
     parser.add_argument(
         "--model_name_or_path",
@@ -166,10 +178,11 @@ def preprocess_dataset(
 def main() -> None:
     args = parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s - %(message)s")
-    logger.info("Loading dataset from %s", args.train_file)
+    raw_data_paths = [args.train_file, *args.train_files]
+    logger.info("Loading dataset from %s", ", ".join(str(path) for path in raw_data_paths))
 
     dataset_config = DatasetConfig(
-        data_path=args.train_file,
+        data_paths=tuple(raw_data_paths),
         validation_ratio=args.validation_ratio,
         seed=args.seed,
     )
